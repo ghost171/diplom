@@ -1,0 +1,7 @@
+\babel@toc {russian}{}
+\contentsline {section}{\numberline {1}Введение}{2}{section.1}%
+\contentsline {section}{\numberline {2}Основные определения}{5}{section.2}%
+\contentsline {section}{\numberline {3}Постановка задачи}{7}{section.3}%
+\contentsline {section}{\numberline {4}Основная часть}{9}{section.4}%
+\contentsline {section}{\numberline {5}Заключение}{21}{section.5}%
+\contentsline {section}{\numberline {6}Приложение}{25}{section.6}%

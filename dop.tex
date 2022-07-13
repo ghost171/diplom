@@ -1,0 +1,136 @@
+
+Пусть $G=(V, E)$ -- граф, $T$ -- дерево, и пусть $\nu = (V_t)_{t \in T}$ семейство множеств вершин, $V_t \subseteq V(G)$ проиндексированных вершинами $t$ из $T$.
+Пара $(T, \nu)$ называется {\it древесной декомпозицией графа $G$} если оно удовлетворяет следующим условиям:
+
+1. $V = \cup_{t \in T} V_t$;
+
+2.Для каждого ребра $e \in G$ существует $t \in T$ такое, что оба конца $e$, лежат в $V_t$;
+
+3. Если $t_1, t_2, t_3 \in T$ и $t_2 \in t_{1}Tt_{3}$, то $V_{t_1} \cap V_{t_3} \subseteq V_{t_2}$
+
+
+
+
+\begin{algorithm}
+    \caption{Функция для проверки графа, на полноту}\label{Функция}
+    \begin{algorithmic}[1]
+      \Procedure{IsItClique}{$gr$}
+          \State $i \gets 0$
+          \State $answers \gets []$
+          \For{\texttt{x in gr.values()}}
+              \If{$len(x) = len(gr.keys())$}
+                  \State $answers[i] \gets 1$
+              \Else
+                  \State $answers[i] \gets 0$
+              \EndIf
+              \State $i \gets i+1$
+            \EndFor
+
+          \For{\texttt{answer in answers}}
+              \If{answer = 0}
+                  \Return 0
+              \EndIf
+          \EndFor
+
+          \Return 1
+          \EndProcedure
+  \end{algorithmic}
+  \end{algorithm}
+
+  Далее опишем жадный алгоритм нахождения древесного разложения.
+  
+  \begin{algorithm}
+  \caption{Функция для проверки графа, на полноту}\label{Жадный алгоритм}
+  \begin{algorithmic}[1]
+      \hspace*{\algorithmicindent} \textbf{Input} \\
+      \hspace*{\algorithmicindent} \textbf{Output} 
+
+      \If{$IsItClique(graph) = 1$}
+          \State $graph \gets len(graph.keys()) - 1$
+          \Return $treewidth$
+      \EndIf
+
+      \State $lengths \gets []$ 
+      \For{\texttt{i, x in enumerate(graph.items())}}
+          lengths[i] = (x[0], len(x[1]))
+      \EndFor
+
+      $Sort(lengths, 1)$
+
+      \State $H_graph \gets graph$
+
+      \While{true}
+          \State $size_of_tree_decomposition \gets size_of_tree_decomposition + 1$
+          \If{$IsItClique(H_graph)$}
+              \State $s.append(list(H_graph.keys()))$
+              \State $n \gets size_of_tree_decomposition$
+              \State $break$
+          \Else
+              \State $v_i \gets "a"$
+              \State $adjacent_edge_of_v_i = []$
+              \For{$\texttt{letter, x in lengths}$}
+                  \State $adjusted_vertices \gets []$
+                  \If{letter in H_graph.keys()}
+                      \For{$\texttt{adj in H_graph[letter]}$}
+                          adjusted_vertices.append(adj)
+                      \EndFor
+                  \EndIf
+                  \State $adjusted_vertices.append(letter)$
+                  \State $graph_copy \gets H_graph$
+                  \State $keys \gets graph_copy.copy().keys()$
+
+                  \For{$\texttt{key in keys}$}
+                      \If{key not in adjusted_vertices}
+                          \State $del graph_copy$
+                          \For{\texttt{x in graph_copy.keys()}}
+                              \If{key in graph_copy[x]}
+                                  \State $graph_copy[x].remove(key)$
+                              \EndIf
+                          \EndFor
+                      \EndIf
+                  \EndFor
+
+                  \If{\texttt{len(graph_copy) != 0 \textbf{And} IsItClique(graph_copy)}}
+                      \State $v_i \gets letter$
+                      \State $adjacent_edge_of_v_i \gets graph_copy[v_i]$
+                      \State $find_clique \gets 1$
+                      \State $break$
+                  \EndIf
+              \EndFor
+
+              \If{\texttt{find_clique = 0}}
+                  \State $s.append(H_graph.keys())$
+                  \State $break$
+              \EndIf
+              
+              \State $adjacent_edge_of_v_i.append(v_i)$
+              \State $s.append(adjacent_edge_of_v_i)$
+
+              \If{\texttt{len(adjacent_edge_of_v_i) > tree_width}}
+                  \State $tree_width = len(adjacent_edge_of_v_i)$
+              \EndIf
+              
+              \State $del H_graph[v_i]$
+
+              \For{x in H_graph.keys()}
+                  \If{\texttt{v_i in H_graph[x]}}
+                      \State $H_graph[x].remove(v_i)$
+                  \EndIf
+              \EndFor
+
+              \If{\texttt{len(H_graph.keys()) = 0}}
+                  \State $break$
+              \EndIf
+
+          \EndIf
+      \EndWhile
+
+      \For{el in s}
+          \If{\texttt{len(el) < min_el \textbf{or} min_el = 0}}
+              \State $min_el \gets len(el)$
+          \EndIf
+      \EndFor
+
+      \Return min_el
+  \end{algorithmic}
+  \end{algorithm}
